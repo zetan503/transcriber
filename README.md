@@ -35,7 +35,65 @@ This should output `CUDA available: True` if your GPU is properly detected.
 
 ## Tools
 
-### Bash Script: podcast-transcribe.sh
+### YouTube Summarization Scripts
+
+#### yt-summerize.sh
+
+A bash script that downloads YouTube subtitles and generates a summary using the Fabric tool.
+
+```bash
+# Basic usage
+./yt-summerize.sh <youtube-url>
+
+# Example
+./yt-summerize.sh https://www.youtube.com/watch?v=wYb3Wimn01s
+```
+
+The script will:
+1. Download subtitles from the provided YouTube URL
+2. Clean the subtitles (remove timestamps and indices)
+3. Use Fabric to generate a summary
+4. Display the summary and save it to summary.txt
+
+#### fabric.sh
+
+A script that uses the Fabric tool to process YouTube videos and generate summaries in markdown format.
+
+```bash
+# Basic usage
+./fabric.sh <youtube-url>
+
+# Example
+./fabric.sh https://www.youtube.com/watch?v=wYb3Wimn01s
+```
+
+#### fabric2.sh
+
+Similar to fabric.sh but uses the Llama 3 8B model for summarization.
+
+```bash
+# Basic usage
+./fabric2.sh <youtube-url>
+
+# Example
+./fabric2.sh https://www.youtube.com/watch?v=wYb3Wimn01s
+```
+
+#### ytr.sh
+
+A bash-only script that downloads YouTube subtitles and generates a summary without requiring external tools.
+
+```bash
+# Basic usage
+./ytr.sh <youtube-url>
+
+# Example
+./ytr.sh https://www.youtube.com/watch?v=wYb3Wimn01s
+```
+
+### Podcast Transcription Scripts
+
+#### podcast-transcribe.sh
 
 A simple bash script that downloads podcast audio, transcribes it, and generates a summary.
 
@@ -106,6 +164,15 @@ The Python script also generates:
   - Verify PyTorch is installed with CUDA support: `python -c "import torch; print(torch.cuda.is_available())"`
   - Ensure you have enough free GPU memory
   - Try reinstalling PyTorch with the correct CUDA version for your system from https://pytorch.org/get-started/locally/
+
+### Fabric Tool Issues
+
+- If you're using the Fabric-based scripts (`yt-summerize.sh`, `fabric.sh`, or `fabric2.sh`), make sure you have the Fabric CLI tool installed
+- You can install Fabric using:
+  ```bash
+  pip install fabric-cli
+  ```
+- For more information about Fabric, visit the official documentation
 
 ## License
 
