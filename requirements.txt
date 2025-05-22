@@ -1,0 +1,11 @@
+# Core dependencies
+yt-dlp>=2023.3.4
+openai-whisper>=20230314
+torch>=2.0.0
+torchaudio>=2.0.0
+torchvision>=0.15.0
+
+# Additional utilities
+numpy>=1.20.0
+scipy>=1.7.0
+ffmpeg-python>=0.2.0
