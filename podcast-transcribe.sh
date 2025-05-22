@@ -27,14 +27,26 @@ fi
 
 # Step 2: Transcribe audio using Whisper
 echo "Transcribing audio with Whisper..."
+
 # Check if whisper is installed
 if ! command -v whisper &> /dev/null; then
     echo "Whisper is not installed. Installing now..."
     pip install -U openai-whisper
 fi
 
+# Check for GPU availability
+if python3 -c "import torch; print(torch.cuda.is_available())" 2>/dev/null | grep -q "True"; then
+    GPU_COUNT=$(python3 -c "import torch; print(torch.cuda.device_count())" 2>/dev/null)
+    echo "✅ CUDA is available with $GPU_COUNT GPU(s):"
+    python3 -c "import torch; [print(f'   - GPU {i}: {torch.cuda.get_device_name(i)}') for i in range(torch.cuda.device_count())]" 2>/dev/null
+    echo "Transcribing with GPU acceleration..."
+else
+    echo "⚠️ CUDA is not available. Whisper will run on CPU only (much slower)."
+fi
+
 # Run transcription
-whisper "$AUDIO_FILE" --model base --output_dir "$OUTPUT_DIR" --output_format txt
+echo "Starting transcription..."
+time whisper "$AUDIO_FILE" --model base --output_dir "$OUTPUT_DIR" --output_format txt
 
 # The output file will be named the same as the input but with .txt extension
 WHISPER_OUTPUT="${AUDIO_FILE%.*}.txt"

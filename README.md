@@ -5,18 +5,33 @@ This project provides tools to transcribe podcasts to text using speech-to-text 
 ## Requirements
 
 - Python 3.6+
-- yt-dlp (for downloading audio)
-- OpenAI Whisper (for speech-to-text)
-- Additional Python packages (installed automatically)
+- CUDA-compatible GPU (optional, but recommended for faster transcription)
+- FFmpeg (required for audio processing)
+- All Python dependencies are listed in requirements.txt
 
 ## Installation
 
 1. Clone this repository
-2. Install yt-dlp:
+2. Create a Python virtual environment (recommended):
+   ```bash
+   python3 -m venv whisper_env
+   source whisper_env/bin/activate  # On Windows: whisper_env\Scripts\activate
    ```
-   pip install yt-dlp
+3. Install all dependencies:
+   ```bash
+   pip install -r requirements.txt
    ```
-3. The scripts will automatically install Whisper if it's not already installed
+
+### GPU Acceleration
+
+The installation above includes PyTorch with CUDA support, which will automatically use your GPU(s) for Whisper transcription if available. This can speed up transcription by 5-10x compared to CPU-only processing.
+
+To verify GPU support is working:
+```bash
+python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('GPU count:', torch.cuda.device_count())"
+```
+
+This should output `CUDA available: True` if your GPU is properly detected.
 
 ## Tools
 
@@ -86,6 +101,11 @@ The Python script also generates:
 - If you encounter issues with downloading, make sure yt-dlp is installed and up to date
 - For transcription issues, try using a smaller Whisper model (tiny or base)
 - If summarization produces poor results, try adjusting the number of sentences
+- If Whisper is running slowly, check GPU usage with `nvidia-smi` to ensure it's utilizing your GPU
+- If your GPU is not being used:
+  - Verify PyTorch is installed with CUDA support: `python -c "import torch; print(torch.cuda.is_available())"`
+  - Ensure you have enough free GPU memory
+  - Try reinstalling PyTorch with the correct CUDA version for your system from https://pytorch.org/get-started/locally/
 
 ## License
 

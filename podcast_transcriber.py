@@ -14,10 +14,29 @@ import sys
 from collections import Counter
 import re
 
+def check_gpu_availability():
+    """Check if CUDA GPUs are available for Whisper."""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            gpu_count = torch.cuda.device_count()
+            gpu_names = [torch.cuda.get_device_name(i) for i in range(gpu_count)]
+            print(f"✅ CUDA is available with {gpu_count} GPU(s):")
+            for i, name in enumerate(gpu_names):
+                print(f"   - GPU {i}: {name}")
+            return True
+        else:
+            print("⚠️ CUDA is not available. Whisper will run on CPU only (much slower).")
+            return False
+    except ImportError:
+        print("⚠️ PyTorch is not installed. Cannot check GPU availability.")
+        return False
+
 def ensure_whisper_installed():
     """Check if Whisper is installed and install if needed."""
     try:
         import whisper
+        print(f"✅ Whisper is installed (version: {whisper.__version__})")
         return True
     except ImportError:
         print("Whisper is not installed. Installing now...")
@@ -63,15 +82,27 @@ def transcribe_audio(audio_path, output_dir, model_size="base"):
     if not ensure_whisper_installed():
         return None
 
+    # Check GPU availability
+    using_gpu = check_gpu_availability()
+
     # Import here to ensure it's installed
     import whisper
+    import time
 
     try:
         # Load the model
+        start_time = time.time()
+        print(f"Loading Whisper model '{model_size}'...")
         model = whisper.load_model(model_size)
+        load_time = time.time() - start_time
+        print(f"Model loaded in {load_time:.2f} seconds")
 
         # Transcribe
+        print(f"Starting transcription{' with GPU acceleration' if using_gpu else ' on CPU'}...")
+        start_time = time.time()
         result = model.transcribe(audio_path)
+        transcribe_time = time.time() - start_time
+        print(f"Transcription completed in {transcribe_time:.2f} seconds")
 
         # Save transcript
         transcript_path = os.path.join(output_dir, "transcript.txt")
